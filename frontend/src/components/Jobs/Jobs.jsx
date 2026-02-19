@@ -10,9 +10,7 @@ const Jobs = () => {
   useGetAllJobs();
   const { allJobs, searchedJobText } = useSelector((state) => state.jobReducer);
   const [filteredJobs, setFilteredJobs] = useState(allJobs);
-  const { user } = useSelector((store) => store.authReducer);
-
-  if (!user) return;
+  // const { user } = useSelector((store) => store.authReducer);
 
   // Filter all jobs based on search text
   useEffect(() => {
