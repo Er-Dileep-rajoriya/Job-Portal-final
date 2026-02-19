@@ -1,6 +1,7 @@
+const apiUrl = import.meta.env.VITE_BACKEND_URL;
 // const apiUrl = "http://localhost:3500";
 // const apiUrl = "http://localhost:3500";
-const apiUrl = "https://job-portal-backend-wq7r.onrender.com";
+// const apiUrl = "https://job-portal-backend-wq7r.onrender.com";
 
 export const USER_API_ENDPOIN = apiUrl + "/api/v1/users";
 export const JOB_API_ENDPOINT = `${apiUrl}/api/v1/job`;
