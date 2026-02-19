@@ -14,7 +14,7 @@ jobRouter.post("/post", isAuthenticated, postJob);
 // get all jobs by student
 jobRouter.get("/get", getAllJobs);
 // get job by id
-jobRouter.get("/get/:id", isAuthenticated, getJobById);
+jobRouter.get("/get/:id", getJobById);
 // get jobs for recruiter (by his logged in userId)
 jobRouter.get("/getAdminJobs", isAuthenticated, getAdminJobs);
 
