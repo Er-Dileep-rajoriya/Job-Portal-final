@@ -8,6 +8,7 @@ import getDataUri from "../dataUriParser.js";
 
 export const register = async (req, res) => {
   try {
+    console.log("req.body; : ", req.body)
     const { fullName, email, phoneNumber, password, role } = req.body;
 
     // if any field empty then return back with error
@@ -21,6 +22,8 @@ export const register = async (req, res) => {
     // set the profile photo also if provided
     const file = req.file;
     let cloudRes = "";
+
+    console.log("file : ", file)
 
     if (file) {
       const fileUri = getDataUri(file);
@@ -37,8 +40,6 @@ export const register = async (req, res) => {
         success: false,
       });
     }
-
-    // register
 
     // hashing password using bcrypt
     const hashedPassword = await bcrypt.hash(password, 10); // 10 is salt value
@@ -57,10 +58,22 @@ export const register = async (req, res) => {
     return res.status(201).json({
       message: "Account Successfully Created.",
       success: true,
-      user: registedUser,
+      user: {
+        fullName,
+        email,
+        role,
+        phoneNumber,
+        profile: cloudRes.secure_url,
+      },
     });
   } catch (error) {
     console.log("Error in Registering : ", error);
+    const msg = error?.message || "Something went wrong.";
+    return res.status(500).json({
+      success: false,
+      message: msg,
+      user: null
+    })
   }
 };
 
@@ -131,10 +144,10 @@ export const login = async (req, res) => {
     return res
       .status(200)
       .cookie("token", token, {
-         httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "none",
-          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
       })
       .json({
         message: `Welcome back, ${user.fullName}!`,

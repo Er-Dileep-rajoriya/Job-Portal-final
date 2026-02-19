@@ -3,65 +3,98 @@ import { Job } from "../models/job.model.js";
 
 // admin job create karega
 export const postJob = async (req, res) => {
-  const {
-    title,
-    description,
-    requirements,
-    salary,
-    experience,
-    location,
-    jobType,
-    position,
-    companyId,
-  } = req.body;
+  try {
+    let {
+      title,
+      description,
+      requirements,
+      salary,
+      experience,
+      location,
+      jobType,
+      position,
+      companyId,
+    } = req.body;
 
-  if (
-    !title ||
-    !description ||
-    !requirements ||
-    !salary ||
-    !experience ||
-    !location ||
-    !jobType ||
-    !position ||
-    !companyId
-  ) {
-    return res.status(400).json({
-      message: "Something is Missing!",
+    if (
+      !title?.trim() ||
+      !description?.trim() ||
+      !requirements?.trim() ||
+      !salary ||
+      !experience ||
+      !location?.trim() ||
+      !jobType?.trim() ||
+      !position?.trim() ||
+      !companyId
+    ) {
+      return res.status(400).json({
+        message: "All fields are required.",
+        success: false,
+      });
+    }
+    experience = Number(experience);
+    if (typeof experience !== 'number') {
+      return res.status(400).json({
+        message: "Experience level must be a number.",
+        success: false,
+      });
+    }
+
+    const parsedSalary = parseFloat(salary);
+    if (isNaN(parsedSalary) || parsedSalary <= 0) {
+      return res.status(400).json({
+        message: "Salary must be a valid positive number.",
+        success: false,
+      });
+    }
+
+    if (parsedSalary >= 100) {
+      return res.status(400).json({
+        message: "Salary must be a under 100LPA.",
+        success: false,
+      });
+    }
+
+    const requirementsArray = requirements
+      .split(",")
+      .map((req) => req.trim())
+      .filter((req) => req.length > 0);
+
+    if (requirementsArray.length === 0) {
+      return res.status(400).json({
+        message: "At least one requirement is required.",
+        success: false,
+      });
+    }
+
+    const createdJob = await Job.create({
+      title: title.trim(),
+      description: description.trim(),
+      requirements: requirementsArray,
+      salary: parsedSalary,
+      experienceLevel: experience,
+      location: location.trim(),
+      jobType: jobType.trim(),
+      position: position.trim(),
+      created_by: req.userId,
+      company: companyId,
+    });
+
+    const job = await Job.findById(createdJob._id).populate("company");
+
+    return res.status(201).json({
+      message: "Job Successfully Created.",
+      success: true,
+      job,
+    });
+
+  } catch (error) {
+    console.error("Error creating job:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
       success: false,
     });
   }
-
-  const createdJob = await Job.create({
-    title,
-    description,
-    requirements: requirements.split(","),
-    salary: parseFloat(salary),
-    experienceLevel: experience,
-    location,
-    jobType,
-    position,
-    created_by: req.userId,
-    company: companyId,
-  });
-
-  // job to send back the client
-  const job = await Job.findById(createdJob._id).populate({
-    path: "company",
-  });
-
-  if (!job) {
-    return res.status(404).json({
-      message: "No Job Found to Return.",
-      success: false,
-    });
-  }
-
-  return res.status(201).json({
-    message: "Job Successfully Created.",
-    success: true,
-    job,
-  });
 };
 
 // student service
