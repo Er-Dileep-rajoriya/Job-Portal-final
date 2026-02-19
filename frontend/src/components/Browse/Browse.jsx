@@ -12,15 +12,15 @@ const Browse = () => {
   const { searchedJobText } = useSelector((state) => state.jobReducer);
   const dispatch = useDispatch();
   const { allJobs } = useSelector((state) => state.jobReducer);
-  const navigate = useNavigate();
-  const { user } = useSelector((state) => state.authReducer);
+  // const navigate = useNavigate();
+  // const { user } = useSelector((state) => state.authReducer);
 
-  // if not authenticated then send to login page
-  useEffect(() => {
-    if (user == null) {
-      navigate("/login");
-    }
-  }, []);
+  // // if not authenticated then send to login page
+  // useEffect(() => {
+  //   if (user == null) {
+  //     navigate("/login");
+  //   }
+  // }, []);
 
   // get all searched jobs from api as soon render this page
   useEffect(() => {

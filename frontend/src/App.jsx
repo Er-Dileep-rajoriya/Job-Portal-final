@@ -32,9 +32,7 @@ const router = createBrowserRouter([
   {
     path: "/jobs",
     element: (
-      <ProtectStudentRoute>
         <Jobs />
-      </ProtectStudentRoute>
     ),
   },
   {
@@ -46,9 +44,7 @@ const router = createBrowserRouter([
   {
     path: "/browse",
     element: (
-      <ProtectStudentRoute>
         <Browse />
-      </ProtectStudentRoute>
     ),
   },
   {
